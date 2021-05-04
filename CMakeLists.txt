@@ -22,24 +22,22 @@ macro(IRODS_MACRO_CHECK_DEPENDENCY_SET_FULLPATH_ADD_TO_IRODS_PACKAGE_DEPENDENCIE
   list(APPEND IRODS_PACKAGE_DEPENDENCIES_LIST irods-externals-${DEPENDENCY_SUBDIRECTORY})
 endmacro()
 
-if("${IRODS_VERSION}" STREQUAL "4.2.8")
-  IRODS_MACRO_CHECK_DEPENDENCY_SET_FULLPATH(CLANG clang6.0-0)
-  IRODS_MACRO_CHECK_DEPENDENCY_SET_FULLPATH_ADD_TO_IRODS_PACKAGE_DEPENDENCIES_LIST(CLANG_RUNTIME clang-runtime6.0-0)
-  IRODS_MACRO_CHECK_DEPENDENCY_SET_FULLPATH_ADD_TO_IRODS_PACKAGE_DEPENDENCIES_LIST(BOOST boost1.67.0-0)
-  add_compile_options(-std=c++17)
-else()
-  IRODS_MACRO_CHECK_DEPENDENCY_SET_FULLPATH(CLANG clang3.8-0)
-  IRODS_MACRO_CHECK_DEPENDENCY_SET_FULLPATH_ADD_TO_IRODS_PACKAGE_DEPENDENCIES_LIST(BOOST boost1.60.0-0)
-  IRODS_MACRO_CHECK_DEPENDENCY_SET_FULLPATH_ADD_TO_IRODS_PACKAGE_DEPENDENCIES_LIST(CLANG_RUNTIME clang-runtime3.8-0)
-  add_compile_options(-std=c++14)
-endif()
-
-IRODS_MACRO_CHECK_DEPENDENCY_SET_FULLPATH_ADD_TO_IRODS_PACKAGE_DEPENDENCIES_LIST(JANSSON jansson2.7-0)
+IRODS_MACRO_CHECK_DEPENDENCY_SET_FULLPATH_ADD_TO_IRODS_PACKAGE_DEPENDENCIES_LIST(CLANG_RUNTIME clang-runtime6.0-0)
 IRODS_MACRO_CHECK_DEPENDENCY_SET_FULLPATH_ADD_TO_IRODS_PACKAGE_DEPENDENCIES_LIST(BOOST boost1.67.0-0)
+IRODS_MACRO_CHECK_DEPENDENCY_SET_FULLPATH_ADD_TO_IRODS_PACKAGE_DEPENDENCIES_LIST(CATCH catch22.3.0-0)
+IRODS_MACRO_CHECK_DEPENDENCY_SET_FULLPATH_ADD_TO_IRODS_PACKAGE_DEPENDENCIES_LIST(JSON json3.7.3-0)
 
-set(CMAKE_C_COMPILER  ${IRODS_EXTERNALS_FULLPATH_CLANG}/bin/clang)
-set(CMAKE_CXX_COMPILER  ${IRODS_EXTERNALS_FULLPATH_CLANG}/bin/clang++)
-set(CMAKE_EXE_LINKER_FLAGS_INIT "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++")
+add_compile_options(-std=c++17)
+
+#link_libraries(c++abi)
+
+set(CMAKE_C_COMPILER  gcc)
+set(CMAKE_CXX_COMPILER  g++)
+
+set(IRODS_CXX_STANDARD 17)
+
+set(CMAKE_EXE_LINKER_FLAGS_INIT "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++17")
+
 add_compile_options(-nostdinc++)
 add_compile_options(-Wall)
 add_compile_options(-Wextra)
@@ -47,17 +45,15 @@ add_compile_options(-Werror)
 add_compile_options(-Wno-unused-parameter)
 add_compile_options(-Wno-unused-function)
 add_compile_options(-fPIC)
+add_compile_options(-Wno-error=return-type)
 
 include_directories(
-  ${IRODS_EXTERNALS_FULLPATH_CLANG}/include/c++/v1
-  ${IRODS_EXTERNALS_FULLPATH_JANSON}/include/
-  ${IRODS_EXTERNALS_FULLPATH_BOOST}/include/
-  ${IRODS_EXTERNALS_FULLPATH_CATCH}/include/
+  /usr/include/irods/
+  /usr/include/c++/7
+  /usr/include/x86_64-linux-gnu/c++/7/
   )
-link_libraries(c++abi)
 
 find_package(OpenSSL REQUIRED)
-# find_package(CURL REQUIRED)
 find_package(PAM REQUIRED)
 
 if (NOT PAM_LIBRARY)
@@ -111,11 +107,8 @@ foreach(TYPE ${IRODS_AUTH_PLUGIN_TYPES})
     ${IRODS_CURRENT_PLUGIN_TARGET}
     PRIVATE
     ${IRODS_EXTERNALS_FULLPATH_BOOST}/include
-    ${IRODS_EXTERNALS_FULLPATH_JANSSON}/include
-    ${IRODS_EXTERNALS_FULLPATH_ARCHIVE}/include
-    ${IRODS_EXTERNALS_PACKAGE_ROOT}/json3.7.3-0/include
+    ${IRODS_EXTERNALS_FULLPATH_JSON}/include
     ${OPENSSL_INCLUDE_DIR}
-    /usr/include/irods/
     )
 
   target_compile_definitions(
@@ -169,17 +162,17 @@ set_property(
   pam_handshake_auth_check
   PROPERTY
   CXX_STANDARD
-  14
+  ${IRODS_CXX_STANDARD}
 )
 
 target_link_libraries(
   pam_handshake_auth_check
   PRIVATE
   ${IRODS_EXTERNALS_FULLPATH_CLANG_RUNTIME}/lib/libc++.so.1
+  ${IRODS_EXTERNALS_FULLPATH_CLANG_RUNTIME}/lib/libc++abi.so.1
   /usr/lib/libirods_common.so
   ${PAM_LIBRARY}
 )
-
 
 # unit test
 add_executable(
@@ -207,7 +200,7 @@ set_property(
   run_test
   PROPERTY
   CXX_STANDARD
-  14
+  ${IRODS_CXX_STANDARD}
   )
 
 target_link_libraries(run_test

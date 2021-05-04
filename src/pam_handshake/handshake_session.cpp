@@ -221,6 +221,8 @@ const char * Session::StateToString(const Session::State & s)
   case State::Authenticated: return "STATE_AUTHENTICATED";
   case State::NotAuthenticated: return "NOT_AUTHENTICATED";
   }
+  
+  return "?";
 }
 
 Session::State Session::getState() const

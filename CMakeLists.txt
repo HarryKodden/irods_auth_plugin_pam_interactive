@@ -38,14 +38,12 @@ set(IRODS_CXX_STANDARD 17)
 
 set(CMAKE_EXE_LINKER_FLAGS_INIT "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++17")
 
-add_compile_options(-nostdinc++)
 add_compile_options(-Wall)
 add_compile_options(-Wextra)
 add_compile_options(-Werror)
 add_compile_options(-Wno-unused-parameter)
 add_compile_options(-Wno-unused-function)
 add_compile_options(-fPIC)
-add_compile_options(-Wno-error=return-type)
 
 include_directories(
   /usr/include/irods/
@@ -208,6 +206,7 @@ set_property(
 
 target_link_libraries(run_test
   ${IRODS_EXTERNALS_FULLPATH_CLANG_RUNTIME}/lib/libc++.so.1
+  ${IRODS_EXTERNALS_FULLPATH_CLANG_RUNTIME}/lib/libc++abi.so.1
   /usr/lib/libirods_common.so
   ${PAM_LIBRARY}
   WhereAmI

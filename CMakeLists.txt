@@ -93,10 +93,12 @@ set(
   )
 
 foreach(TYPE ${IRODS_AUTH_PLUGIN_TYPES})
-  set(
+  
+set(
     IRODS_CURRENT_PLUGIN_TARGET
     pam_interactive_${TYPE}
     )
+
   add_library(
     ${IRODS_CURRENT_PLUGIN_TARGET}
     MODULE
@@ -189,8 +191,9 @@ add_executable(
 target_include_directories(
   run_test
   PRIVATE
-  ${IRODS_EXTERNALS_PACKAGE_ROOT}/catch22.3.0-0/include/
-  ${IRODS_EXTERNALS_PACKAGE_ROOT}/json3.7.3-0/include
+  ${IRODS_EXTERNALS_FULLPATH_BOOST}/include
+  ${IRODS_EXTERNALS_FULLPATH_CATCH}/include
+  ${IRODS_EXTERNALS_FULLPATH_JSON}/include
   /usr/include/irods/
   src
   )

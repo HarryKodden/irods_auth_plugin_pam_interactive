@@ -27,16 +27,14 @@ IRODS_MACRO_CHECK_DEPENDENCY_SET_FULLPATH_ADD_TO_IRODS_PACKAGE_DEPENDENCIES_LIST
 IRODS_MACRO_CHECK_DEPENDENCY_SET_FULLPATH_ADD_TO_IRODS_PACKAGE_DEPENDENCIES_LIST(CATCH catch22.3.0-0)
 IRODS_MACRO_CHECK_DEPENDENCY_SET_FULLPATH_ADD_TO_IRODS_PACKAGE_DEPENDENCIES_LIST(JSON json3.7.3-0)
 
-add_compile_options(-std=c++17)
 
-#link_libraries(c++abi)
-
+set(CMAKE_C_COMPILER  ${IRODS_EXTERNALS_FULLPATH_CLANG}/bin/clang)
+set(CMAKE_CXX_COMPILER  ${IRODS_EXTERNALS_FULLPATH_CLANG}/bin/clang++)
+set(CMAKE_EXE_LINKER_FLAGS_INIT "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++")
 set(CMAKE_C_COMPILER  gcc)
 set(CMAKE_CXX_COMPILER  g++)
 
 set(IRODS_CXX_STANDARD 17)
-
-set(CMAKE_EXE_LINKER_FLAGS_INIT "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++17")
 
 set(IRODS_PLUGINS_DIRECTORY "/usr/lib/irods/plugins")
 
@@ -48,10 +46,12 @@ add_compile_options(-Wno-unused-function)
 add_compile_options(-fPIC)
 
 include_directories(
-  /usr/include/irods/
-  /usr/include/c++/7
-  /usr/include/x86_64-linux-gnu/c++/7/
-  )
+  ${IRODS_EXTERNALS_FULLPATH_CLANG}/include/c++/v1
+  ${IRODS_EXTERNALS_FULLPATH_BOOST}/include/
+  ${IRODS_EXTERNALS_FULLPATH_CATCH}/include/
+)
+
+link_libraries(c++abi)
 
 find_package(OpenSSL REQUIRED)
 find_package(PAM REQUIRED)

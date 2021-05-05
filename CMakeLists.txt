@@ -27,7 +27,6 @@ IRODS_MACRO_CHECK_DEPENDENCY_SET_FULLPATH_ADD_TO_IRODS_PACKAGE_DEPENDENCIES_LIST
 IRODS_MACRO_CHECK_DEPENDENCY_SET_FULLPATH_ADD_TO_IRODS_PACKAGE_DEPENDENCIES_LIST(CATCH catch22.3.0-0)
 IRODS_MACRO_CHECK_DEPENDENCY_SET_FULLPATH_ADD_TO_IRODS_PACKAGE_DEPENDENCIES_LIST(JSON json3.7.3-0)
 
-
 set(CMAKE_C_COMPILER  ${IRODS_EXTERNALS_FULLPATH_CLANG}/bin/clang)
 set(CMAKE_CXX_COMPILER  ${IRODS_EXTERNALS_FULLPATH_CLANG}/bin/clang++)
 set(CMAKE_EXE_LINKER_FLAGS_INIT "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++")
@@ -70,37 +69,37 @@ set(IRODS_AUTH_PLUGIN_pam_interactive_SOURCES
   ${CMAKE_SOURCE_DIR}/src/message.cpp
   ${CMAKE_SOURCE_DIR}/src/pam_handshake/handshake_session.cpp
   ${CMAKE_SOURCE_DIR}/src/pam_handshake/pam_conversation.cpp
-  )
+)
 
 
 set(
   IRODS_AUTH_PLUGIN_TYPES
   client
   server
-  )
+)
 
 set(
   IRODS_PLUGIN_COMPILE_DEFINITIONS_client
-  )
+)
 
 set(
   IRODS_PLUGIN_COMPILE_DEFINITIONS_server
   RODS_SERVER
   ENABLE_RE
-  )
+)
 
 foreach(TYPE ${IRODS_AUTH_PLUGIN_TYPES})
   
-set(
+  set(
     IRODS_CURRENT_PLUGIN_TARGET
     pam_interactive_${TYPE}
-    )
+  )
 
   add_library(
     ${IRODS_CURRENT_PLUGIN_TARGET}
     MODULE
     ${IRODS_AUTH_PLUGIN_pam_interactive_SOURCES}
-    )
+  )
 
   target_include_directories(
     ${IRODS_CURRENT_PLUGIN_TARGET}
@@ -108,7 +107,7 @@ set(
     ${IRODS_EXTERNALS_FULLPATH_BOOST}/include
     ${IRODS_EXTERNALS_FULLPATH_JSON}/include
     ${OPENSSL_INCLUDE_DIR}
-    )
+  )
 
   target_compile_definitions(
     ${IRODS_CURRENT_PLUGIN_TARGET}
@@ -116,38 +115,44 @@ set(
     ${IRODS_PLUGIN_COMPILE_DEFINITIONS_${TYPE}}
     ${IRODS_COMPILE_DEFINITIONS}
     BOOST_SYSTEM_NO_DEPRECATED
-    )
+  )
+  
   target_compile_options(
     ${IRODS_CURRENT_PLUGIN_TARGET}
     PRIVATE
-    -Wno-write-strings)
+    -Wno-write-strings
+  )
+  
   set_property(
     TARGET
     ${IRODS_CURRENT_PLUGIN_TARGET}
     PROPERTY
     CXX_STANDARD
-    ${IRODS_CXX_STANDARD})
+    ${IRODS_CXX_STANDARD}
+  )
+  
   install(
       TARGETS
       ${IRODS_CURRENT_PLUGIN_TARGET}
       LIBRARY
       DESTINATION ${IRODS_PLUGINS_DIRECTORY}/auth
       COMPONENT ${IRODS_PACKAGE_COMPONENT_RUNTIME_NAME}
-      )
-endforeach()
+   )
+
+   endforeach()
 
 target_link_libraries(
   pam_interactive_server
   PRIVATE
   ${PAM_LIBRARY}
   WhereAmI
-  )
+)
 
 target_link_libraries(
   pam_interactive_client
   PRIVATE
   WhereAmI
-  )
+)
 
 # auth check executable
 add_executable(
@@ -173,10 +178,6 @@ target_link_libraries(
   ${PAM_LIBRARY}
 )
 
-# HK: Do not build run_test yet. I have linking problem with that.
-# therefor, this return() is stopping further processing !
-return()
-
 # unit test
 add_executable(
   run_test
@@ -187,7 +188,7 @@ add_executable(
   ${CMAKE_SOURCE_DIR}/src/message.cpp
   ${CMAKE_SOURCE_DIR}/src/conversation.cpp
   ${CMAKE_SOURCE_DIR}/src/pam_handshake/pam_conversation.cpp
-  )
+)
 
 target_include_directories(
   run_test
@@ -197,7 +198,7 @@ target_include_directories(
   ${IRODS_EXTERNALS_FULLPATH_JSON}/include
   /usr/include/irods/
   src
-  )
+)
 
 set_property(
   TARGET
@@ -205,7 +206,7 @@ set_property(
   PROPERTY
   CXX_STANDARD
   ${IRODS_CXX_STANDARD}
-  )
+)
 
 target_link_libraries(run_test
   ${IRODS_EXTERNALS_FULLPATH_CLANG_RUNTIME}/lib/libc++.so.1

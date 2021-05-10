@@ -35,6 +35,7 @@ set(CMAKE_EXE_LINKER_FLAGS_INIT "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++")
 set(IRODS_CXX_STANDARD 14)
 set(IRODS_PLUGINS_DIRECTORY "/usr/lib/irods/plugins")
 
+add_compile_options(-nostdinc++)
 add_compile_options(-Wall)
 add_compile_options(-Wextra)
 add_compile_options(-Werror)
